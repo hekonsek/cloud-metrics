@@ -15,6 +15,8 @@
         image: grafana/grafana
         state: started
         network_mode: host
+        volumes:
+          - cloud-metrics-grafana:/var/lib/grafana
 
     - name: Start ElasticSearch server
       docker_container:

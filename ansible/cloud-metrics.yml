@@ -1,0 +1,29 @@
+- hosts: all
+  remote_user: fedora
+  become: true
+
+  roles:
+    - { role: hekonsek.fedora-firewall,0.5 }
+    - { role: hekonsek.fedora-firewall-port,0.1, vars: {targetPort: 8080}  }
+    - { role: hekonsek.fedora-docker,0.1 }
+
+  tasks:
+
+    - name: Start Grafana server
+      docker_container:
+        name: grafana
+        image: grafana/grafana
+        state: started
+        network_mode: host
+
+    - name: Start ElasticSearch server
+      docker_container:
+        name: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.6.3
+        state: started
+        network_mode: host
+        env:
+          "xpack.security.enabled": "false"
+          "discovery.type": single-node
+        volumes:
+          - cloud-metrics-elasticsearch:/usr/share/elasticsearch/data

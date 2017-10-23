@@ -71,6 +71,11 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.8.1</version>
+        </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -135,12 +140,6 @@
             <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>ch.qos.logback</groupId>-->
-            <!--<artifactId>logback-classic</artifactId>-->
-            <!--<version>1.2.2</version>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
     </dependencies>
 
     <build>
@@ -392,35 +391,5 @@
             </build>
         </profile>
     </profiles>
-
-    <!-- Required by Sonatype release -->
-
-    <description>kafkaless</description>
-    <url>https://github.com/kafkaless/kafkaless</url>
-
-    <developers>
-        <developer>
-            <name>Henryk Konsek</name>
-            <email>hekonsek@gmail.com</email>
-        </developer>
-    </developers>
-
-    <scm>
-        <connection>scm:git:git@github.com:kafkaless/kafkaless.git</connection>
-        <developerConnection>scm:git:git@github.com:kafkaless/kafkaless.git</developerConnection>
-        <url>git@github.com:kafkaless/kafkaless.git</url>
-        <tag>HEAD</tag>
-    </scm>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
 </project>

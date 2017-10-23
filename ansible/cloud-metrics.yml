@@ -5,6 +5,7 @@
   roles:
     - { role: hekonsek.fedora-firewall,0.5 }
     - { role: hekonsek.fedora-firewall-port,0.1, vars: {targetPort: 8080}  }
+    - { role: hekonsek.fedora-firewall-port,0.1, vars: {targetPort: 3000}  }
     - { role: hekonsek.fedora-docker,0.1 }
 
   tasks:

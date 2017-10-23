@@ -28,5 +28,6 @@
         env:
           "xpack.security.enabled": "false"
           "discovery.type": single-node
+          "cluster.name": cloud_metrics
         volumes:
           - cloud-metrics-elasticsearch:/usr/share/elasticsearch/data

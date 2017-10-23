@@ -1,2 +1,6 @@
+# InteliJ Idea
 .idea/
+*.iml
+
+# Ansible
 *.retry

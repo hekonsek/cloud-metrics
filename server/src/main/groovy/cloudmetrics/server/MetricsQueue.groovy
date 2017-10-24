@@ -1,8 +1,7 @@
 package cloudmetrics.server
 
-import org.apache.commons.lang3.RandomUtils
+import cloudmetrics.server.grafana.GrafanaService
 
-import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
@@ -16,7 +15,11 @@ class MetricsQueue {
 
     private final elasticSearchProcessor = new ElasticSearchProcessor()
 
-    MetricsQueue() {
+    private final GrafanaDataSourceProcessor grafanaDataSourceProcessor
+
+    MetricsQueue(String grafanaApiKey) {
+        grafanaDataSourceProcessor = new GrafanaDataSourceProcessor(new GrafanaService(grafanaApiKey))
+
         5.times {
             executor.submit(new Runnable() {
                 @Override
@@ -26,6 +29,7 @@ class MetricsQueue {
                             def metric = queue.poll(5, TimeUnit.SECONDS)
                             if (metric != null) {
                                 elasticSearchProcessor.process(metric)
+                                grafanaDataSourceProcessor.process(metric)
                             }
                         } catch (Exception e) {
                             e.printStackTrace()

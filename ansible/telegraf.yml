@@ -1,0 +1,37 @@
+- hosts: all
+  remote_user: fedora
+  become: true
+
+  tasks:
+
+    - name: Install Telegraf client
+      command: yum install -y https://dl.influxdata.com/telegraf/releases/telegraf-1.4.2-1.x86_64.rpm
+
+    - name: Disable per-CPU metrics
+      lineinfile:
+        path: /etc/telegraf/telegraf.conf
+        regexp: 'percpu = '
+        line: 'percpu = false'
+
+    - name: Enable CPU activity summary
+      lineinfile:
+        path: /etc/telegraf/telegraf.conf
+        regexp: 'report_active = '
+        line: 'report_active = true'
+
+    - name: Enable UDP socket writer
+      lineinfile:
+        path: /etc/telegraf/telegraf.conf
+        line: '[[outputs.socket_writer]]'
+
+    - name: Enable UDP socket writer endpoint
+      lineinfile:
+        path: /etc/telegraf/telegraf.conf
+        line: "address = \"udp://0.0.0.0:{{ cloud_metrics_port | default('8094') }}\""
+
+    - name: Ensures telegraf is running
+      systemd:
+        name: telegraf
+        state: started
+        daemon_reload: true
+        enabled: yes

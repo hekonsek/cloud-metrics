@@ -2,14 +2,15 @@ package cloudmetrics.server
 
 import cloudmetrics.server.grafana.GrafanaService
 
+import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
 import static java.util.concurrent.Executors.newFixedThreadPool
 
-class MetricsQueue {
+class MetricsProcessorVerticle {
 
-    private final queue = new LinkedBlockingQueue<Metric>()
+    private final BlockingQueue<Metric> queue
 
     private final executor = newFixedThreadPool(5)
 
@@ -17,7 +18,8 @@ class MetricsQueue {
 
     private final GrafanaDataSourceProcessor grafanaDataSourceProcessor
 
-    MetricsQueue(String grafanaApiKey) {
+    MetricsProcessorVerticle(BlockingQueue<Metric> queue, String grafanaApiKey) {
+        this.queue = queue
         grafanaDataSourceProcessor = new GrafanaDataSourceProcessor(new GrafanaService(grafanaApiKey))
 
         5.times {
@@ -39,10 +41,5 @@ class MetricsQueue {
             })
         }
     }
-
-    void append(Metric metric) {
-        queue.add(metric)
-    }
-
 
 }

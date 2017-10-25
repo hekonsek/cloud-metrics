@@ -5,6 +5,7 @@ import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.Response
 
 class GrafanaService {
 
@@ -37,15 +38,22 @@ class GrafanaService {
                 .url(url).post(body).header('Authorization', 'Bearer ' + apiKey)
                 .build()
 
-        def response = client.newCall(request).execute()
-        if(response.code() == 200) {
-        } else if(response.code() == 409) {
-            throw new EntityAlreadyExistsException()
-        } else if(response.code() == 422) {
-            def responseMap = new ObjectMapper().readValue(response.body().bytes(), List)
-            throw new IllegalArgumentException(responseMap.join('\n'))
-        } else {
-            throw new RuntimeException('Unknown result.')
+        Response response = null
+        try {
+            response = client.newCall(request).execute()
+            if (response.code() == 200) {
+            } else if (response.code() == 409) {
+                throw new EntityAlreadyExistsException()
+            } else if (response.code() == 422) {
+                def responseMap = new ObjectMapper().readValue(response.body().bytes(), List)
+                throw new IllegalArgumentException(responseMap.join('\n'))
+            } else {
+                throw new RuntimeException('Unknown result.')
+            }
+        } finally {
+            if(response != null) {
+                response.close()
+            }
         }
     }
 

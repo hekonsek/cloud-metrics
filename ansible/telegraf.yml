@@ -27,7 +27,12 @@
     - name: Enable UDP socket writer endpoint
       lineinfile:
         path: /etc/telegraf/telegraf.conf
-        line: "address = \"udp://0.0.0.0:{{ cloud_metrics_port | default('8094') }}\""
+        line: "address = \"udp://{{ cloud_metrics_host | default('0.0.0.0') }}:8000\""
+
+    - name: Enable UDP socket writer JSON format
+      lineinfile:
+        path: /etc/telegraf/telegraf.conf
+        line: "data_format = json"
 
     - name: Ensures telegraf is running
       systemd:

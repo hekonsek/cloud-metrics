@@ -18,6 +18,7 @@
         network_mode: host
         volumes:
           - cloud-metrics-grafana:/var/lib/grafana
+        restart_policy: unless-stopped
 
     - name: Start ElasticSearch server
       docker_container:
@@ -31,3 +32,4 @@
           "cluster.name": cloud_metrics
         volumes:
           - cloud-metrics-elasticsearch:/usr/share/elasticsearch/data
+        restart_policy: unless-stopped

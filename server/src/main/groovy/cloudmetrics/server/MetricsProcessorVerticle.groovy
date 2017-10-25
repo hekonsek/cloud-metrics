@@ -1,45 +1,41 @@
 package cloudmetrics.server
 
-import cloudmetrics.server.grafana.GrafanaService
+import io.vertx.core.AbstractVerticle
+import io.vertx.core.Future
 
 import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.TimeUnit
 
-import static java.util.concurrent.Executors.newFixedThreadPool
+import static java.util.concurrent.TimeUnit.SECONDS
 
-class MetricsProcessorVerticle {
+class MetricsProcessorVerticle extends AbstractVerticle {
 
     private final BlockingQueue<Metric> queue
-
-    private final executor = newFixedThreadPool(5)
 
     private final elasticSearchProcessor = new ElasticSearchProcessor()
 
     private final GrafanaDataSourceProcessor grafanaDataSourceProcessor
 
-    MetricsProcessorVerticle(BlockingQueue<Metric> queue, String grafanaApiKey) {
+    MetricsProcessorVerticle(BlockingQueue<Metric> queue, GrafanaDataSourceProcessor grafanaDataSourceProcessor) {
         this.queue = queue
-        grafanaDataSourceProcessor = new GrafanaDataSourceProcessor(new GrafanaService(grafanaApiKey))
+        this.grafanaDataSourceProcessor = grafanaDataSourceProcessor
+    }
 
-        5.times {
-            executor.submit(new Runnable() {
-                @Override
-                void run() {
-                    while (true) {
-                        try {
-                            def metric = queue.poll(5, TimeUnit.SECONDS)
-                            if (metric != null) {
-                                elasticSearchProcessor.process(metric)
-                                grafanaDataSourceProcessor.process(metric)
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace()
-                        }
+    @Override
+    void start(Future<Void> startFuture) {
+        vertx.executeBlocking {
+            while (true) {
+                try {
+                    def metric = queue.poll(5, SECONDS)
+                    if (metric != null) {
+                        elasticSearchProcessor.process(metric)
+                        grafanaDataSourceProcessor.process(metric)
                     }
+                } catch (Exception e) {
+                    e.printStackTrace()
                 }
-            })
-        }
+            }
+        } {}
+        startFuture.complete()
     }
 
 }

@@ -17,7 +17,7 @@ class GrafanaDataSourceProcessor {
     void process(Metric metric) {
         if(!existingMetrics.contains(metric.key)) {
             try {
-                grafanaService.create(new ElasticSearchDataSourceBuilder(metric.key, metric.key).build())
+                grafanaService.create('datasources', new ElasticSearchDataSourceBuilder(metric.key, metric.key).build())
             } catch (EntityAlreadyExistsException e) {
                 existingMetrics << metric.key
             }

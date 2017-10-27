@@ -15,26 +15,25 @@ class MetricsProcessorVerticle extends AbstractVerticle {
 
     private final GrafanaDataSourceProcessor grafanaDataSourceProcessor
 
-    MetricsProcessorVerticle(BlockingQueue<Metric> queue, GrafanaDataSourceProcessor grafanaDataSourceProcessor) {
+    private final GrafanaDiagramProcessor grafanaDiagramProcessor
+
+    MetricsProcessorVerticle(BlockingQueue<Metric> queue, GrafanaDataSourceProcessor grafanaDataSourceProcessor, GrafanaDiagramProcessor grafanaDiagramProcessor) {
         this.queue = queue
         this.grafanaDataSourceProcessor = grafanaDataSourceProcessor
+        this.grafanaDiagramProcessor = grafanaDiagramProcessor
     }
 
     @Override
     void start(Future<Void> startFuture) {
-        vertx.executeBlocking {
-            while (true) {
-                try {
-                    def metric = queue.poll(5, SECONDS)
-                    if (metric != null) {
-                        elasticSearchProcessor.process(metric)
-                        grafanaDataSourceProcessor.process(metric)
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace()
-                }
+        vertx.setPeriodic(1000) {
+            def metric = queue.poll()
+            if (metric != null) {
+                elasticSearchProcessor.process(metric)
+                grafanaDataSourceProcessor.process(metric)
+                grafanaDiagramProcessor.process(metric)
             }
-        } {}
+        }
+
         startFuture.complete()
     }
 

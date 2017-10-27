@@ -1,6 +1,7 @@
 package cloudmetrics.server
 
 import cloudmetrics.server.grafana.GrafanaService
+import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.datagram.DatagramSocketOptions
 
@@ -17,9 +18,11 @@ class CloudMetricsServer {
 
         vertx.deployVerticle(new MetricsAppendVerticle(queue))
         vertx.deployVerticle(new ImportTelegrafVerticle())
-        def grafanaProcessor = new GrafanaDataSourceProcessor(new GrafanaService('eyJrIjoiRlNobFE0WmF3Qmh1SE12REFkWUN0TzhTSnhrVmg3ZnUiLCJuIjoiZmRmZGYiLCJpZCI6MX0='))
-        5.times {
-            vertx.deployVerticle(new MetricsProcessorVerticle(queue, grafanaProcessor))
+
+        def grafanaService = new GrafanaService('eyJrIjoiRlNobFE0WmF3Qmh1SE12REFkWUN0TzhTSnhrVmg3ZnUiLCJuIjoiZmRmZGYiLCJpZCI6MX0=')
+        25.times {
+            vertx.deployVerticle(new MetricsProcessorVerticle(queue, new GrafanaDataSourceProcessor(grafanaService), new GrafanaDiagramProcessor(grafanaService)),
+                    new DeploymentOptions().setWorker(true))
         }
 
         def socket = vertx.createDatagramSocket(new DatagramSocketOptions());

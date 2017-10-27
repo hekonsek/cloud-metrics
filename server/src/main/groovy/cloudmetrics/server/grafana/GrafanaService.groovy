@@ -27,15 +27,15 @@ class GrafanaService {
     }
 
     GrafanaService(String apiKey) {
-        this('http://localhost:3000/api/datasources', apiKey)
+        this('http://localhost:3000/api/', apiKey)
     }
 
-    void create(Object entity) {
+    void create(String type, Object entity) {
         def client = new OkHttpClient()
 
-        def body = RequestBody.create(JSON, new ObjectMapper().writeValueAsString(entity));
+        def body = entity instanceof String ? RequestBody.create(JSON, entity as String) : RequestBody.create(JSON, new ObjectMapper().writeValueAsString(entity))
         def request = new Request.Builder()
-                .url(url).post(body).header('Authorization', 'Bearer ' + apiKey)
+                .url(url + type).post(body).header('Authorization', 'Bearer ' + apiKey)
                 .build()
 
         Response response = null

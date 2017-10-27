@@ -17,8 +17,12 @@ class Metric {
     Metric() {
     }
 
+    String type() {
+        key.replaceFirst(/node\..+?\./, '')
+    }
+
     Date getTimestamp() {
-        return timestamp
+        timestamp
     }
 
     void setTimestamp(Date timestamp) {
@@ -26,7 +30,7 @@ class Metric {
     }
 
     String getKey() {
-        return key
+        key
     }
 
     void setKey(String key) {

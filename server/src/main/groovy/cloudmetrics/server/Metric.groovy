@@ -1,5 +1,8 @@
 package cloudmetrics.server
 
+import groovy.transform.ToString
+
+@ToString
 class Metric {
 
     Date timestamp

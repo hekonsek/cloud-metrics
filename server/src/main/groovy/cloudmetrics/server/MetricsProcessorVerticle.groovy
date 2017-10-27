@@ -25,7 +25,7 @@ class MetricsProcessorVerticle extends AbstractVerticle {
 
     @Override
     void start(Future<Void> startFuture) {
-        vertx.setPeriodic(1000) {
+        vertx.setPeriodic(250) {
             def metric = queue.poll()
             if (metric != null) {
                 elasticSearchProcessor.process(metric)

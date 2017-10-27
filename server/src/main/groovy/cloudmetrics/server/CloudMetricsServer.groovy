@@ -27,9 +27,7 @@ class CloudMetricsServer {
         def grafanaService = new RestGrafanaService('eyJrIjoiRlNobFE0WmF3Qmh1SE12REFkWUN0TzhTSnhrVmg3ZnUiLCJuIjoiZmRmZGYiLCJpZCI6MX0=')
         def grafanaDashboardService = new GrafanaDashboardService(new IgniteDocumentService(Files.createTempDir()).start(), grafanaService)
         def processorVerticle = new MetricsProcessorVerticle(queue, new GrafanaDataSourceProcessor(grafanaService), new GrafanaDiagramProcessor(grafanaDashboardService))
-        25.times {
-            vertx.deployVerticle(processorVerticle, new DeploymentOptions().setWorker(true))
-        }
+        vertx.deployVerticle(processorVerticle, new DeploymentOptions().setWorker(true))
 
         def socket = vertx.createDatagramSocket(new DatagramSocketOptions());
         socket.listen(8000, "0.0.0.0") { asyncResult ->

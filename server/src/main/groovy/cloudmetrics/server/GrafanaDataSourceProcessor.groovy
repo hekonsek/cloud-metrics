@@ -2,15 +2,15 @@ package cloudmetrics.server
 
 import cloudmetrics.server.grafana.ElasticSearchDataSourceBuilder
 import cloudmetrics.server.grafana.EntityAlreadyExistsException
-import cloudmetrics.server.grafana.GrafanaService
+import cloudmetrics.server.grafana.RestGrafanaService
 
 class GrafanaDataSourceProcessor {
 
-    private final GrafanaService grafanaService
+    private final RestGrafanaService grafanaService
 
     private Set<String> existingMetrics = new LinkedHashSet<>()
 
-    GrafanaDataSourceProcessor(GrafanaService grafanaService) {
+    GrafanaDataSourceProcessor(RestGrafanaService grafanaService) {
         this.grafanaService = grafanaService
     }
 

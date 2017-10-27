@@ -17,6 +17,10 @@ class Metric {
     Metric() {
     }
 
+    String node() {
+        key.replaceFirst(/node\./, '').replaceFirst(/\..+/, '')
+    }
+
     String type() {
         key.replaceFirst(/node\..+?\./, '')
     }

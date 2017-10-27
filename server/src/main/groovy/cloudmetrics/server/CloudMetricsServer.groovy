@@ -1,6 +1,9 @@
 package cloudmetrics.server
 
-import cloudmetrics.server.grafana.GrafanaService
+import cloudmetrics.server.document.IgniteDocumentService
+import cloudmetrics.server.grafana.GrafanaDashboardService
+import cloudmetrics.server.grafana.RestGrafanaService
+import com.google.common.io.Files
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.datagram.DatagramSocketOptions
@@ -9,20 +12,23 @@ import java.util.concurrent.LinkedBlockingQueue
 
 class CloudMetricsServer {
 
-    static void main(String[] args) {
-        System.setProperty("es.set.netty.runtime.available.processors", "false")
+    CloudMetricsServer() {
+        this(Vertx.vertx())
+    }
 
-        def vertx = Vertx.vertx()
+    CloudMetricsServer(Vertx vertx) {
+        System.setProperty("es.set.netty.runtime.available.processors", "false")
 
         def queue = new LinkedBlockingQueue<Metric>()
 
         vertx.deployVerticle(new MetricsAppendVerticle(queue))
         vertx.deployVerticle(new ImportTelegrafVerticle())
 
-        def grafanaService = new GrafanaService('eyJrIjoiRlNobFE0WmF3Qmh1SE12REFkWUN0TzhTSnhrVmg3ZnUiLCJuIjoiZmRmZGYiLCJpZCI6MX0=')
+        def grafanaService = new RestGrafanaService('eyJrIjoiRlNobFE0WmF3Qmh1SE12REFkWUN0TzhTSnhrVmg3ZnUiLCJuIjoiZmRmZGYiLCJpZCI6MX0=')
+        def grafanaDashboardService = new GrafanaDashboardService(new IgniteDocumentService(Files.createTempDir()).start(), grafanaService)
+        def processorVerticle = new MetricsProcessorVerticle(queue, new GrafanaDataSourceProcessor(grafanaService), new GrafanaDiagramProcessor(grafanaDashboardService))
         25.times {
-            vertx.deployVerticle(new MetricsProcessorVerticle(queue, new GrafanaDataSourceProcessor(grafanaService), new GrafanaDiagramProcessor(grafanaService)),
-                    new DeploymentOptions().setWorker(true))
+            vertx.deployVerticle(processorVerticle, new DeploymentOptions().setWorker(true))
         }
 
         def socket = vertx.createDatagramSocket(new DatagramSocketOptions());
@@ -35,6 +41,10 @@ class CloudMetricsServer {
                 throw asyncResult.cause()
             }
         }
+    }
+
+    static void main(String[] args) {
+        new CloudMetricsServer()
     }
 
 }

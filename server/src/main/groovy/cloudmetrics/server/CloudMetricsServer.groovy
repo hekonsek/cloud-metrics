@@ -13,6 +13,7 @@ import io.vertx.core.datagram.DatagramSocketOptions
 import io.vertx.core.json.Json
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
+import org.springframework.context.annotation.Bean
 
 class CloudMetricsServer {
 
@@ -23,8 +24,6 @@ class CloudMetricsServer {
     CloudMetricsServer(Vertx vertx) {
         def spring = new SpringApplicationBuilder(CloudMetricsServerConfig).run()
         def telegrafService = spring.getBean(TelegrafService)
-
-        new KafkaCluster().usingDirectory(new File("/tmp/kaf1")).withPorts(2182, 9092).deleteDataPriorToStartup(true).addBrokers(1).startup()
 
         System.setProperty("es.set.netty.runtime.available.processors", "false")
 
@@ -43,7 +42,9 @@ class CloudMetricsServer {
                 socket.handler {
                     def telegrafMetric = new ObjectMapper().readValue(it.data().bytes, Map)
                     def importedMetric = telegrafService.importMetric(telegrafMetric)
-                    vertx.eventBus().send('metrics.append', Json.encode(importedMetric))
+                    if(importedMetric != null) {
+                        vertx.eventBus().send('metrics.append', Json.encode(importedMetric))
+                    }
                 }
             } else {
                 throw asyncResult.cause()
@@ -57,6 +58,15 @@ class CloudMetricsServer {
 
     @SpringBootApplication
     static class CloudMetricsServerConfig {
+
+        @Bean(initMethod = 'startup', destroyMethod = 'shutdown')
+        KafkaCluster kafkaCluster() {
+            new KafkaCluster().
+                    withPorts(2182, 9092).
+                    usingDirectory(new File("/tmp/kaf1")).deleteDataPriorToStartup(true).
+                    addBrokers(1)
+        }
+
     }
 
 }

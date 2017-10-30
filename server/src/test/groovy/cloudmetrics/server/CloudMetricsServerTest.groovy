@@ -1,19 +1,18 @@
-package cloudmetrics.server.telegraf
+package cloudmetrics.server
 
-import cloudmetrics.server.CloudMetricsServer
 import cloudmetrics.server.telegraf.TelegrafService
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
 
+import static json4dummies.Json.fromJson
 import static org.assertj.core.api.Assertions.assertThat
 
 @RunWith(SpringRunner)
 @SpringBootTest(classes = CloudMetricsServer.CloudMetricsServerConfig)
-class TelegrafServiceTest {
+class CloudMetricsServerTest {
 
     @Autowired
     TelegrafService telegrafService
@@ -21,7 +20,7 @@ class TelegrafServiceTest {
     @Test
     void shouldParseCpuMetric() {
         // Given
-        def telegrafCpuMetric = new ObjectMapper().readValue(getClass().getResourceAsStream('/telegraf-cpu.json'), Map)
+        def telegrafCpuMetric = fromJson(getClass().getResourceAsStream('/telegraf-cpu.json').bytes, Map)
 
         // When
         def importedMetric = telegrafService.importMetric(telegrafCpuMetric)
@@ -34,7 +33,7 @@ class TelegrafServiceTest {
     @Test
     void shouldIgnoreUnknownMetric() {
         // Given
-        def telegrafUnknownMetric = new ObjectMapper().readValue(getClass().getResourceAsStream('/telegraf-unknown.json'), Map)
+        def telegrafUnknownMetric = fromJson(getClass().getResourceAsStream('/telegraf-unknown.json').bytes, Map)
 
         // When
         def importedMetric = telegrafService.importMetric(telegrafUnknownMetric)

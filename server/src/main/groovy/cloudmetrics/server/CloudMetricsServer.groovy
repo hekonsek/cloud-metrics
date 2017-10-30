@@ -3,11 +3,14 @@ package cloudmetrics.server
 import cloudmetrics.server.document.IgniteDocumentService
 import cloudmetrics.server.grafana.GrafanaDashboardService
 import cloudmetrics.server.grafana.RestGrafanaService
+import cloudmetrics.server.telegraf.TelegrafService
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.io.Files
 import io.debezium.kafka.KafkaCluster
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.datagram.DatagramSocketOptions
+import io.vertx.core.json.Json
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 
@@ -19,6 +22,7 @@ class CloudMetricsServer {
 
     CloudMetricsServer(Vertx vertx) {
         def spring = new SpringApplicationBuilder(CloudMetricsServerConfig).run()
+        def telegrafService = spring.getBean(TelegrafService)
 
         new KafkaCluster().usingDirectory(new File("/tmp/kaf1")).withPorts(2182, 9092).deleteDataPriorToStartup(true).addBrokers(1).startup()
 
@@ -37,7 +41,9 @@ class CloudMetricsServer {
         socket.listen(8000, "0.0.0.0") { asyncResult ->
             if (asyncResult.succeeded()) {
                 socket.handler {
-                    vertx.eventBus().send(ImportTelegrafVerticle.INPUT, it.data().toString())
+                    def telegrafMetric = new ObjectMapper().readValue(it.data().bytes, Map)
+                    def importedMetric = telegrafService.importMetric(telegrafMetric)
+                    vertx.eventBus().send('metrics.append', Json.encode(importedMetric))
                 }
             } else {
                 throw asyncResult.cause()

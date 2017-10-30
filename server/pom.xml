@@ -23,8 +23,8 @@
         <awaitilty.version>3.0.0</awaitilty.version>
         <commons-lang3.version>3.6</commons-lang3.version>
         <junit.version>4.12</junit.version>
-        <kafka.version>0.11.0.1</kafka.version>
         <slf4j.version>1.7.25</slf4j.version>
+        <debezium.version>0.5.1</debezium.version>
 
         <mainClass>cloudmetrics.server.CloudMetricsServer</mainClass>
     </properties>
@@ -39,8 +39,24 @@
             <artifactId>vertx-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-kafka-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.debezium</groupId>
+            <artifactId>debezium-core</artifactId>
+            <version>${debezium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.debezium</groupId>
+            <artifactId>debezium-core</artifactId>
+            <version>${debezium.version}</version>
+            <type>test-jar</type>
         </dependency>
 
         <dependency>

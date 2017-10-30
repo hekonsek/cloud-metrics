@@ -4,6 +4,7 @@ import cloudmetrics.server.document.IgniteDocumentService
 import cloudmetrics.server.grafana.GrafanaDashboardService
 import cloudmetrics.server.grafana.RestGrafanaService
 import com.google.common.io.Files
+import io.debezium.kafka.KafkaCluster
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.datagram.DatagramSocketOptions
@@ -15,6 +16,9 @@ class CloudMetricsServer {
     }
 
     CloudMetricsServer(Vertx vertx) {
+        def props = new Properties()
+        new KafkaCluster().usingDirectory(new File("/tmp/kaf1")).withPorts(2182, 9092).withKafkaConfiguration(props).deleteDataPriorToStartup(true).addBrokers(1).startup()
+
         System.setProperty("es.set.netty.runtime.available.processors", "false")
 
         vertx.deployVerticle(new MetricsAppendVerticle())

@@ -8,6 +8,8 @@ import io.debezium.kafka.KafkaCluster
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.datagram.DatagramSocketOptions
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.builder.SpringApplicationBuilder
 
 class CloudMetricsServer {
 
@@ -16,8 +18,9 @@ class CloudMetricsServer {
     }
 
     CloudMetricsServer(Vertx vertx) {
-        def props = new Properties()
-        new KafkaCluster().usingDirectory(new File("/tmp/kaf1")).withPorts(2182, 9092).withKafkaConfiguration(props).deleteDataPriorToStartup(true).addBrokers(1).startup()
+        def spring = new SpringApplicationBuilder(CloudMetricsServerConfig).run()
+
+        new KafkaCluster().usingDirectory(new File("/tmp/kaf1")).withPorts(2182, 9092).deleteDataPriorToStartup(true).addBrokers(1).startup()
 
         System.setProperty("es.set.netty.runtime.available.processors", "false")
 
@@ -44,6 +47,10 @@ class CloudMetricsServer {
 
     static void main(String[] args) {
         new CloudMetricsServer()
+    }
+
+    @SpringBootApplication
+    static class CloudMetricsServerConfig {
     }
 
 }

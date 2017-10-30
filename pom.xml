@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <licenses>
         <license>
@@ -27,13 +28,13 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <!-- Dependencies versions -->
-        <awaitilty.version>3.0.0</awaitilty.version>
         <commons-lang3.version>3.6</commons-lang3.version>
         <groovy.version>2.4.12</groovy.version>
         <guava.version>23.3-jre</guava.version>
         <junit.version>4.12</junit.version>
         <kafka.version>0.11.0.1</kafka.version>
         <slf4j.version>1.7.25</slf4j.version>
+        <spring-boot.version>2.0.0.M5</spring-boot.version>
         <vertx.version>3.5.0</vertx.version>
 
         <!-- Plugins versions -->
@@ -61,6 +62,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>2.0.0.M5</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
@@ -330,6 +339,17 @@
             </build>
         </profile>
     </profiles>
+
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/libs-milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <!-- Required by Sonatype release -->
 

@@ -31,7 +31,7 @@ class CloudMetricsServer {
 
     @Bean(initMethod = 'startup', destroyMethod = 'shutdown')
     KafkaCluster kafkaCluster() {
-        def cluster = new KafkaCluster().
+        new KafkaCluster().
                 withPorts(2181, 9092).
                 usingDirectory(new File("/tmp/kaf1")).deleteDataPriorToStartup(true).
                 addBrokers(3)

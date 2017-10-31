@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.stereotype.Component
 
+import static cloudmetrics.server.metrics.MetricsConsumer.INPUT
+
 @Component
 class GrafanaDataSourceMaterializedView {
 
@@ -16,9 +18,8 @@ class GrafanaDataSourceMaterializedView {
 
     private Set<String> existingMetrics = new LinkedHashSet<>()
 
-    @StreamListener('metrics')
-    void process(Metric metric) {
-//        println metric.key
+    @StreamListener(INPUT)
+    void materialize(Metric metric) {
         if(!existingMetrics.contains(metric.key)) {
             try {
                 grafanaService.create('datasources', new ElasticSearchDataSourceBuilder(metric.key, metric.key).build())

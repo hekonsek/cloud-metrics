@@ -5,16 +5,16 @@ import cloudmetrics.server.document.IgniteDocumentService
 import cloudmetrics.server.grafana.GrafanaDashboardService
 import cloudmetrics.server.grafana.GrafanaService
 import cloudmetrics.server.grafana.RestGrafanaService
+import cloudmetrics.server.metrics.MetricsConsumer
 import cloudmetrics.server.metrics.MetricsProducer
 import com.google.common.io.Files
-import io.debezium.kafka.KafkaCluster
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.context.annotation.Bean
 
 @SpringBootApplication
-@EnableBinding(MetricsProducer)
+@EnableBinding([MetricsProducer, MetricsConsumer])
 class CloudMetricsServer {
 
 //    @Bean(initMethod = 'startup', destroyMethod = 'shutdown')

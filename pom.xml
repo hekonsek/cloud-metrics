@@ -35,6 +35,7 @@
         <json4dummies.version>0.0</json4dummies.version>
         <junit.version>4.12</junit.version>
         <kafka.version>0.11.0.1</kafka.version>
+        <kotlin.version>1.1.51</kotlin.version>
         <slf4j.version>1.7.25</slf4j.version>
         <spring-boot.version>2.0.0.M5</spring-boot.version>
         <vertx.version>3.5.0</vertx.version>
@@ -80,11 +81,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.awaitility</groupId>
-                <artifactId>awaitility</artifactId>
-                <version>${awaitility.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.github.hekonsek</groupId>
                 <artifactId>json4dummies</artifactId>
                 <version>${json4dummies.version}</version>
@@ -93,6 +89,17 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.debezium</groupId>
+                <artifactId>debezium-core</artifactId>
+                <version>${debezium.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.debezium</groupId>
+                <artifactId>debezium-core</artifactId>
+                <version>${debezium.version}</version>
+                <type>test-jar</type>
             </dependency>
             <dependency>
                 <groupId>org.apache.kafka</groupId>
@@ -106,15 +113,14 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>io.debezium</groupId>
-                <artifactId>debezium-core</artifactId>
-                <version>${debezium.version}</version>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-reflect</artifactId>
+                <version>${kotlin.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.debezium</groupId>
-                <artifactId>debezium-core</artifactId>
-                <version>${debezium.version}</version>
-                <type>test-jar</type>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>${awaitility.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

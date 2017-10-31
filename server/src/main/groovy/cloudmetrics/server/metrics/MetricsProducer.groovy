@@ -5,7 +5,7 @@ import org.springframework.messaging.MessageChannel
 
 interface MetricsProducer {
 
-    @Output("metrics")
+    @Output("metricsProducer")
     MessageChannel metricsProducer()
 
 }

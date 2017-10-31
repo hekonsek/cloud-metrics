@@ -1,5 +1,6 @@
 package cloudmetrics.server
 
+import cloudmetrics.server.grafana.GrafanaDashboardService
 import cloudmetrics.server.metrics.Metric
 import cloudmetrics.server.metrics.MetricsService
 import cloudmetrics.server.telegraf.TelegrafService
@@ -70,6 +71,34 @@ class CloudMetricsServerTest {
             def resultsSize = client.prepareSearch('node.node1.cpu').setQuery(QueryBuilders.matchQuery('value', metricValue)).execute().get().hits.size()
             assertThat(resultsSize).isEqualTo(1)
         }
+    }
+
+    // Grafana dashboard service
+
+    @Autowired
+    GrafanaDashboardService dashboardService
+
+    @Test
+    void shouldGetDashboard() {
+        // When
+        def dashboard = dashboardService.dashboard()
+
+        // Then
+        assertThat(dashboard).isNotNull()
+    }
+
+    @Test
+    void shouldPersistDashboardOnCommit() {
+        // Given
+        def dashboard = dashboardService.dashboard()
+
+        // When
+        dashboard.foo = 'bar'
+        dashboardService.commit(dashboard)
+        dashboard = dashboardService.dashboard()
+
+        // Then
+        assertThat(dashboard.foo).isEqualTo('bar')
     }
 
 }

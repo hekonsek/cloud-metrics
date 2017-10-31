@@ -1,10 +1,11 @@
 package cloudmetrics.server.grafana
 
-import cloudmetrics.server.metrics.Metric
 import cloudmetrics.server.document.DocumentService
+import cloudmetrics.server.metrics.Metric
 
 import static GrafanaTemplates.emptyDashboard
 import static cloudmetrics.server.grafana.GrafanaTemplates.rowForMetric
+import static json4dummies.Json.fromJson
 
 class GrafanaDashboardService {
 
@@ -67,7 +68,7 @@ class GrafanaDashboardService {
                     }
                 }
             }
-            def target = decodeValue(GrafanaTemplates.target(metric.key, refid), Map)
+            def target = fromJson(GrafanaTemplates.target(metric.key, refid), Map)
             targets << target
             commit(dashboard)
         }

@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    stream:
+        bindings:
+          metricsConsumer:
+            destination: metrics
+          metricsProducer:
+            destination: metrics

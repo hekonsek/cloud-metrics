@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component
 
 import java.text.SimpleDateFormat
 
+import static cloudmetrics.server.metrics.MetricsConsumer.INPUT
+
+
 @Component
 class GrafanaElasticSearchMaterializedView {
 
@@ -21,10 +24,8 @@ class GrafanaElasticSearchMaterializedView {
 
     private final def grafanaTimestampFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
-    @StreamListener('metrics')
+    @StreamListener(INPUT)
     void materialize(Metric metric) {
-        println metric.key
-
         grafanaTimestampFormat.setTimeZone(TimeZone.getTimeZone('GMT'))
         def payload = [value: metric.value, '@timestamp': metric.timestamp]
         def json = new ObjectMapper().setDateFormat(grafanaTimestampFormat).writeValueAsString(payload)

@@ -3,11 +3,9 @@ package cloudmetrics.server
 import cloudmetrics.server.metrics.Metric
 import cloudmetrics.server.metrics.MetricsService
 import cloudmetrics.server.telegraf.TelegrafService
-import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.transport.client.PreBuiltTransportClient
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,6 +49,8 @@ class CloudMetricsServerTest {
         // When
         assertThat(importedMetric).isNull()
     }
+
+    // Metrics tests
 
     @Autowired
     MetricsService metricsService

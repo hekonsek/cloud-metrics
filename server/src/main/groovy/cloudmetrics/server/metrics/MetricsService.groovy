@@ -1,8 +1,7 @@
 package cloudmetrics.server.metrics
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.kafka.support.KafkaHeaders
-import org.springframework.messaging.support.GenericMessage
+import org.springframework.integration.support.MessageBuilder
 import org.springframework.stereotype.Service
 
 @Service
@@ -12,9 +11,7 @@ class MetricsService {
     MetricsProducer metricsProducer
 
     void appendMetric(Metric metric) {
-        def headers = [:]
-        headers[KafkaHeaders.MESSAGE_KEY] = metric.key
-        metricsProducer.metricsProducer().send(new GenericMessage(metric, headers))
+        metricsProducer.metricsProducer().send(MessageBuilder.withPayload(metric).build())
     }
 
 }

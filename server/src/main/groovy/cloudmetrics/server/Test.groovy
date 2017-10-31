@@ -12,7 +12,7 @@ class Test {
     static void main(String[] args) {
         def metricsService = new SpringApplicationBuilder(CloudMetricsServer).run().getBean(MetricsService)
 
-        1000.times {
+        10000.times {
             metricsService.appendMetric(new Metric(new Date(), 'node.node1.metric1', RandomUtils.nextDouble(60, 80)))
             metricsService.appendMetric(new Metric(new Date(), 'node.node2.metric1', RandomUtils.nextDouble(70, 90)))
             metricsService.appendMetric(new Metric(new Date(), 'node.node3.metric1', RandomUtils.nextDouble(80, 100)))

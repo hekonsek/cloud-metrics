@@ -1,17 +1,20 @@
 package cloudmetrics.server
 
-import io.vertx.core.Vertx
-import io.vertx.core.json.Json
+import cloudmetrics.server.metrics.Metric
+import cloudmetrics.server.metrics.MetricsService
 import org.apache.commons.lang3.RandomUtils
+import org.springframework.boot.builder.SpringApplicationBuilder
+
+import java.util.concurrent.TimeUnit
 
 class Test {
 
     static void main(String[] args) {
-        def vertx = Vertx.vertx()
-        new CloudMetricsServer(vertx)
-        vertx.setPeriodic(1000) {
-            vertx.eventBus().send('metrics.append', Json.encode(new Metric(new Date(), 'node.node1.metric1', RandomUtils.nextDouble(80, 100))))
-            vertx.eventBus().send('metrics.append', Json.encode(new Metric(new Date(), 'node.node2.metric1', RandomUtils.nextDouble(70, 90))))
+        def metricsService = new SpringApplicationBuilder(CloudMetricsServer).run().getBean(MetricsService)
+        1000.times {
+            metricsService.appendMetric(new Metric(new Date(), 'node.node1.metric1', RandomUtils.nextDouble(80, 100)))
+            metricsService.appendMetric(new Metric(new Date(), 'node.node2.metric1', RandomUtils.nextDouble(70, 90)))
+            TimeUnit.SECONDS.sleep(1)
         }
     }
 

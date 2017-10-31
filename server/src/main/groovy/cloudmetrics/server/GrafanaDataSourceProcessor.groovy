@@ -3,6 +3,7 @@ package cloudmetrics.server
 import cloudmetrics.server.grafana.ElasticSearchDataSourceBuilder
 import cloudmetrics.server.grafana.EntityAlreadyExistsException
 import cloudmetrics.server.grafana.RestGrafanaService
+import cloudmetrics.server.metrics.Metric
 
 class GrafanaDataSourceProcessor {
 

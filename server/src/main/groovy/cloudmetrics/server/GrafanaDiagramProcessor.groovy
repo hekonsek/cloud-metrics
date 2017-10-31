@@ -1,6 +1,7 @@
 package cloudmetrics.server
 
 import cloudmetrics.server.grafana.GrafanaDashboardService
+import cloudmetrics.server.metrics.Metric
 
 class GrafanaDiagramProcessor {
 

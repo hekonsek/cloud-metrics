@@ -1,6 +1,6 @@
 package cloudmetrics.server.telegraf
 
-import cloudmetrics.server.Metric
+import cloudmetrics.server.metrics.Metric
 import org.springframework.stereotype.Service
 
 @Service

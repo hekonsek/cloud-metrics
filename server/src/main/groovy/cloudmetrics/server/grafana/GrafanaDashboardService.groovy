@@ -1,11 +1,10 @@
 package cloudmetrics.server.grafana
 
-import cloudmetrics.server.Metric
+import cloudmetrics.server.metrics.Metric
 import cloudmetrics.server.document.DocumentService
 
 import static GrafanaTemplates.emptyDashboard
 import static cloudmetrics.server.grafana.GrafanaTemplates.rowForMetric
-import static io.vertx.core.json.Json.decodeValue
 
 class GrafanaDashboardService {
 

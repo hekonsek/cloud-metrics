@@ -1,10 +1,10 @@
 package cloudmetrics.server.grafana
 
-import cloudmetrics.server.Metric
+import cloudmetrics.server.metrics.Metric
 import org.apache.commons.io.IOUtils
 
 import static com.google.common.base.Charsets.UTF_8
-import static io.vertx.core.json.Json.decodeValue
+//import static io.vertx.core.json.Json.decodeValue
 
 class GrafanaTemplates {
 

@@ -1,72 +1,54 @@
 package cloudmetrics.server
 
-import cloudmetrics.server.document.IgniteDocumentService
-import cloudmetrics.server.grafana.GrafanaDashboardService
-import cloudmetrics.server.grafana.RestGrafanaService
-import cloudmetrics.server.telegraf.TelegrafService
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.common.io.Files
+import cloudmetrics.server.metrics.MetricsProducer
 import io.debezium.kafka.KafkaCluster
-import io.vertx.core.DeploymentOptions
-import io.vertx.core.Vertx
-import io.vertx.core.datagram.DatagramSocketOptions
-import io.vertx.core.json.Json
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
+import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.context.annotation.Bean
 
+@SpringBootApplication
+@EnableBinding(MetricsProducer)
 class CloudMetricsServer {
 
-    CloudMetricsServer() {
-        this(Vertx.vertx())
-    }
+//    CloudMetricsServer(Vertx vertx) {
+//        System.setProperty("es.set.netty.runtime.available.processors", "false")
+//
+//        vertx.deployVerticle(new MetricsAppendVerticle())
+//        vertx.deployVerticle(new ImportTelegrafVerticle())
+//
+//        def grafanaService = new RestGrafanaService('eyJrIjoiRlNobFE0WmF3Qmh1SE12REFkWUN0TzhTSnhrVmg3ZnUiLCJuIjoiZmRmZGYiLCJpZCI6MX0=')
+//        def grafanaDashboardService = new GrafanaDashboardService(new IgniteDocumentService(Files.createTempDir()).start(), grafanaService)
+//        def processorVerticle = new MetricsProcessorVerticle(new GrafanaDataSourceProcessor(grafanaService), new GrafanaDiagramProcessor(grafanaDashboardService))
+//        vertx.deployVerticle(processorVerticle, new DeploymentOptions().setWorker(true))
+//        vertx.deployVerticle(new GrafanaElasticSearchDataSourceVerticle())
+//
+//        def socket = vertx.createDatagramSocket(new DatagramSocketOptions());
+//        socket.listen(8000, "0.0.0.0") { asyncResult ->
+//            if (asyncResult.succeeded()) {
+//                socket.handler {
+//                    def telegrafMetric = new ObjectMapper().readValue(it.data().bytes, Map)
+//                    def importedMetric = telegrafService.importMetric(telegrafMetric)
+//                    if(importedMetric != null) {
+//                        vertx.eventBus().send('metrics.append', Json.encode(importedMetric))
+//                    }
+//                }
+//            } else {
+//                throw asyncResult.cause()
+//            }
+//        }
+//    }
 
-    CloudMetricsServer(Vertx vertx) {
-        def spring = new SpringApplicationBuilder(CloudMetricsServerConfig).run()
-        def telegrafService = spring.getBean(TelegrafService)
-
-        System.setProperty("es.set.netty.runtime.available.processors", "false")
-
-        vertx.deployVerticle(new MetricsAppendVerticle())
-        vertx.deployVerticle(new ImportTelegrafVerticle())
-
-        def grafanaService = new RestGrafanaService('eyJrIjoiRlNobFE0WmF3Qmh1SE12REFkWUN0TzhTSnhrVmg3ZnUiLCJuIjoiZmRmZGYiLCJpZCI6MX0=')
-        def grafanaDashboardService = new GrafanaDashboardService(new IgniteDocumentService(Files.createTempDir()).start(), grafanaService)
-        def processorVerticle = new MetricsProcessorVerticle(new GrafanaDataSourceProcessor(grafanaService), new GrafanaDiagramProcessor(grafanaDashboardService))
-        vertx.deployVerticle(processorVerticle, new DeploymentOptions().setWorker(true))
-        vertx.deployVerticle(new GrafanaElasticSearchDataSourceVerticle())
-
-        def socket = vertx.createDatagramSocket(new DatagramSocketOptions());
-        socket.listen(8000, "0.0.0.0") { asyncResult ->
-            if (asyncResult.succeeded()) {
-                socket.handler {
-                    def telegrafMetric = new ObjectMapper().readValue(it.data().bytes, Map)
-                    def importedMetric = telegrafService.importMetric(telegrafMetric)
-                    if(importedMetric != null) {
-                        vertx.eventBus().send('metrics.append', Json.encode(importedMetric))
-                    }
-                }
-            } else {
-                throw asyncResult.cause()
-            }
-        }
+    @Bean(initMethod = 'startup', destroyMethod = 'shutdown')
+    KafkaCluster kafkaCluster() {
+        new KafkaCluster().
+                withPorts(2181, 9092).
+                usingDirectory(new File("/tmp/kaf1")).deleteDataPriorToStartup(true).
+                addBrokers(1)
     }
 
     static void main(String[] args) {
-        new CloudMetricsServer()
-    }
-
-    @SpringBootApplication
-    static class CloudMetricsServerConfig {
-
-        @Bean(initMethod = 'startup', destroyMethod = 'shutdown')
-        KafkaCluster kafkaCluster() {
-            new KafkaCluster().
-                    withPorts(2182, 9092).
-                    usingDirectory(new File("/tmp/kaf1")).deleteDataPriorToStartup(true).
-                    addBrokers(1)
-        }
-
+        new SpringApplicationBuilder(CloudMetricsServer).run()
     }
 
 }

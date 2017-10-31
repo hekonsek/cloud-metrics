@@ -1,4 +1,4 @@
-package cloudmetrics.server
+package cloudmetrics.server.metrics
 
 import groovy.transform.ToString
 

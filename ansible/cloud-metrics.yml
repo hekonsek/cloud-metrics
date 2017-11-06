@@ -10,16 +10,6 @@
 
   tasks:
 
-    - name: Start Grafana server
-      docker_container:
-        name: grafana
-        image: grafana/grafana
-        state: started
-        network_mode: host
-        volumes:
-          - cloud-metrics-grafana:/var/lib/grafana
-        restart_policy: unless-stopped
-
     - name: Start ElasticSearch server
       docker_container:
         name: elasticsearch

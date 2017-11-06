@@ -1,6 +1,6 @@
 package cloudmetrics.server.grafana.dashboard
 
-import cloudmetrics.server.grafana.GrafanaDashboardService
+import cloudmetrics.server.lib.grafana.GrafanaDashboardService
 import cloudmetrics.server.metrics.Metric
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.stream.annotation.StreamListener

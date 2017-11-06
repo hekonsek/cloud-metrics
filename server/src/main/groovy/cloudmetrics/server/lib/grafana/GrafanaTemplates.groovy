@@ -1,4 +1,4 @@
-package cloudmetrics.server.grafana
+package cloudmetrics.server.lib.grafana
 
 import cloudmetrics.server.metrics.Metric
 import org.apache.commons.io.IOUtils

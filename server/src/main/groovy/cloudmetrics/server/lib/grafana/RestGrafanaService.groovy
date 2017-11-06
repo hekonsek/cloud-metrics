@@ -1,4 +1,4 @@
-package cloudmetrics.server.grafana
+package cloudmetrics.server.lib.grafana
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.*
@@ -15,23 +15,46 @@ class RestGrafanaService implements GrafanaService {
 
     private final String apiKey
 
+    private final String username
+
+    private final String password
+
+    private final OkHttpClient client
+
     // Constructors
 
-    RestGrafanaService(String url, String apiKey) {
+    RestGrafanaService(String url, String apiKey, String username, String password) {
         this.url = url
         this.apiKey = apiKey
+        this.username = username
+        this.password = password
+
+        if (apiKey == null) {
+            client = new OkHttpClient.Builder().authenticator(new Authenticator() {
+                @Override
+                Request authenticate(Route route, Response response) throws IOException {
+                    String credential = Credentials.basic(username, password)
+                    response.request().newBuilder().header("Authorization", credential).build()
+                }
+            }).build()
+        } else {
+            client = new OkHttpClient.Builder().authenticator(new Authenticator() {
+                @Override
+                Request authenticate(Route route, Response response) throws IOException {
+                    response.request().newBuilder().header("Authorization", 'Bearer ' + apiKey).build()
+                }
+            }).build()
+        }
     }
 
-    RestGrafanaService(String apiKey) {
-        this('http://localhost:3000/api/', apiKey)
+    RestGrafanaService(String username, String password) {
+        this('http://localhost:3000/api/', null, username, password)
     }
 
     void create(String type, Object entity) {
-        def client = new OkHttpClient()
-
         def body = entity instanceof String ? RequestBody.create(JSON, entity as String) : RequestBody.create(JSON, new ObjectMapper().writeValueAsString(entity))
         def request = new Request.Builder()
-                .url(url + type).post(body).header('Authorization', 'Bearer ' + apiKey)
+                .url(url + type).post(body)
                 .build()
 
         Response response = null
@@ -47,7 +70,7 @@ class RestGrafanaService implements GrafanaService {
                 throw new RuntimeException('Unknown result:' + response)
             }
         } finally {
-            if(response != null) {
+            if (response != null) {
                 response.close()
             }
         }

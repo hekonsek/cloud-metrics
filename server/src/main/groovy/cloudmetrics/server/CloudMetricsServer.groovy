@@ -2,19 +2,24 @@ package cloudmetrics.server
 
 import cloudmetrics.server.document.DocumentService
 import cloudmetrics.server.document.IgniteDocumentService
-import cloudmetrics.server.grafana.GrafanaDashboardService
-import cloudmetrics.server.grafana.GrafanaService
-import cloudmetrics.server.grafana.RestGrafanaService
+import cloudmetrics.server.lib.grafana.GrafanaDashboardService
+import cloudmetrics.server.lib.grafana.GrafanaService
+import cloudmetrics.server.lib.grafana.RestGrafanaService
 import cloudmetrics.server.metrics.MetricsConsumer
 import cloudmetrics.server.metrics.MetricsProducer
 import cloudmetrics.server.metrics.MetricsService
 import cloudmetrics.server.telegraf.TelegrafService
+import com.github.hekonsek.spring.boot.docker.spotify.NamedContainer
+import com.github.hekonsek.spring.boot.docker.spotify.SpotifyDockerAutoConfiguration
 import com.google.common.io.Files
+import com.spotify.docker.client.messages.ContainerConfig
+import com.spotify.docker.client.messages.HostConfig
 import io.debezium.kafka.KafkaCluster
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Import
 import reactor.core.Environment
 import reactor.io.encoding.StandardCodecs
 import reactor.net.netty.udp.NettyDatagramServer
@@ -22,11 +27,13 @@ import reactor.net.udp.DatagramServer
 import reactor.net.udp.spec.DatagramServerSpec
 import reactor.spring.context.config.EnableReactor
 
+import static com.spotify.docker.client.messages.HostConfig.RestartPolicy.unlessStopped
 import static json4dummies.Json.fromJson
 
 @SpringBootApplication
 @EnableBinding([MetricsProducer, MetricsConsumer])
 @EnableReactor
+@Import(SpotifyDockerAutoConfiguration)
 class CloudMetricsServer {
 
     @Bean(initMethod = 'startup', destroyMethod = 'shutdown')
@@ -39,7 +46,7 @@ class CloudMetricsServer {
 
     @Bean
     GrafanaService grafanaService() {
-        new RestGrafanaService('eyJrIjoiZm5QaFVnbk80akk2RVE2MlVWdTVLaFdjQjI4MjVyQm4iLCJuIjoia2V5IiwiaWQiOjF9')
+        new RestGrafanaService('admin', 'admin')
     }
 
     @Bean
@@ -67,6 +74,13 @@ class CloudMetricsServer {
 
         server.start().await()
         server
+    }
+
+    @Bean
+    NamedContainer grafanaContainer() {
+        def hostConfig = HostConfig.builder().networkMode('host').restartPolicy(unlessStopped()).build()
+        new NamedContainer('grafana', ContainerConfig.builder().image('grafana/grafana').
+                addVolume('cloud-metrics-grafana:/var/lib/grafana').hostConfig(hostConfig).build())
     }
 
     static void main(String[] args) {

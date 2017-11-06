@@ -1,10 +1,10 @@
-package cloudmetrics.server.grafana
+package cloudmetrics.server.lib.grafana
 
 import cloudmetrics.server.document.DocumentService
 import cloudmetrics.server.metrics.Metric
 
 import static GrafanaTemplates.emptyDashboard
-import static cloudmetrics.server.grafana.GrafanaTemplates.rowForMetric
+import static GrafanaTemplates.rowForMetric
 import static json4dummies.Json.fromJson
 
 class GrafanaDashboardService {

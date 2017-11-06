@@ -66,16 +66,16 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-stream-dependencies</artifactId>
-                <version>Elmhurst.M2</version>
+                <groupId>com.github.hekonsek</groupId>
+                <artifactId>spring-boot-docker-spotify</artifactId>
+                <version>0.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-parent</artifactId>
-                <version>2.0.0.M5</version>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-stream-dependencies</artifactId>
+                <version>Elmhurst.M2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -136,7 +136,7 @@
                     <configuration>
                         <images>
                             <image>
-                                <name>kafkaless/${image.target}</name>
+                                <name>hekonsek/${image.target}</name>
                                 <build>
                                     <from>smolok/fatjar:0.0.11</from>
                                     <tags>
@@ -380,8 +380,8 @@
 
     <!-- Required by Sonatype release -->
 
-    <description>kafkaless</description>
-    <url>https://github.com/kafkaless/kafkaless</url>
+    <description>cloud-metrics</description>
+    <url>https://github.com/hekonsek/cloud-metrics</url>
 
     <developers>
         <developer>
@@ -391,9 +391,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git@github.com:kafkaless/kafkaless.git</connection>
-        <developerConnection>scm:git:git@github.com:kafkaless/kafkaless.git</developerConnection>
-        <url>git@github.com:kafkaless/kafkaless.git</url>
+        <connection>scm:git:git@github.com:https://github.com/hekonsek/cloud-metrics.git</connection>
+        <developerConnection>scm:git:git@github.com:https://github.com/hekonsek/cloud-metrics.git</developerConnection>
+        <url>git@github.com:https://github.com/hekonsek/cloud-metrics.git</url>
         <tag>HEAD</tag>
     </scm>
 

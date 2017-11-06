@@ -1,8 +1,8 @@
 package cloudmetrics.server.grafana.datasource
 
-import cloudmetrics.server.grafana.ElasticSearchDataSourceBuilder
-import cloudmetrics.server.grafana.EntityAlreadyExistsException
-import cloudmetrics.server.grafana.GrafanaService
+import cloudmetrics.server.lib.grafana.ElasticSearchDataSourceBuilder
+import cloudmetrics.server.lib.grafana.EntityAlreadyExistsException
+import cloudmetrics.server.lib.grafana.GrafanaService
 import cloudmetrics.server.metrics.Metric
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.stream.annotation.StreamListener

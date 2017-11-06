@@ -1,4 +1,4 @@
-package cloudmetrics.server.grafana
+package cloudmetrics.server.lib.grafana
 
 interface GrafanaService {
 

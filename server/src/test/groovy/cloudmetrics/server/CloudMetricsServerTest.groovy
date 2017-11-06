@@ -1,13 +1,12 @@
 package cloudmetrics.server
 
-import cloudmetrics.server.grafana.GrafanaDashboardService
+import cloudmetrics.server.lib.grafana.GrafanaDashboardService
 import cloudmetrics.server.metrics.Metric
 import cloudmetrics.server.metrics.MetricsService
 import cloudmetrics.server.telegraf.TelegrafService
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.transport.RemoteTransportException
 import org.elasticsearch.transport.client.PreBuiltTransportClient
 import org.junit.Test
 import org.junit.runner.RunWith
